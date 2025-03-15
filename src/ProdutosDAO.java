@@ -50,9 +50,42 @@ public class ProdutosDAO {
             }
         }
     }
-    
-    public ArrayList<ProdutosDTO> listarProdutos(){
-        
+
+    public ArrayList<ProdutosDTO> listarProdutos() {
+        conn = new conectaDAO().connectDB();
+
+        try {
+            String sql = "SELECT * FROM produtos";
+
+            prep = conn.prepareStatement(sql);
+            resultset = prep.executeQuery();
+
+            while (resultset.next()) {
+                ProdutosDTO produto = new ProdutosDTO();
+                produto.setId(resultset.getInt("id"));
+                produto.setNome(resultset.getString("nome"));
+                produto.setValor(resultset.getInt("valor"));
+                produto.setStatus(resultset.getString("status"));
+
+                listagem.add(produto);
+            }
+        } catch (SQLException error) {
+            JOptionPane.showMessageDialog(null, "Erro ao listar produtos: " + error.getMessage());
+        } finally {
+            try {
+                if (resultset != null) {
+                    resultset.close();
+                }
+                if (prep != null) {
+                    prep.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Erro ao fechar os recursos: " + e.getMessage());
+            }
+        }
         return listagem;
     }
 
